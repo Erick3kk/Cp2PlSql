@@ -32,17 +32,18 @@
                         <th>ID</th>
                         <th>Participante</th>
                         <th>Tipo</th>
-                        <th>Presenças</th>
+                        <th style="text-align: center;">Pres.</th>
                         <th style="text-align: right;">Saldo</th>
                     </tr>
                 </thead>
-                <tbody id="tabela-usuarios"></tbody>
+                <tbody id="tabela-usuarios">
+                    </tbody>
             </table>
+
+            <button id="btnReset" onclick="resetar()" class="secondary-button">
+                Resetar Sistema
+            </button>
         </div>
-    </div>
-        <div style="display: flex; gap: 10px;">
-        <button id="btnDistribuir" onclick="distribuir()">Distribuir Créditos</button>
-        <button id="btnReset" onclick="resetar()" style="background: #333; color: #fff; width: 40%;">Reset</button>
     </div>
 
     <script>
@@ -52,11 +53,8 @@
                 .then(data => {
                     const corpoTabela = document.getElementById('tabela-usuarios');
                     corpoTabela.innerHTML = ''; 
-                    
                     data.forEach(u => {
-                        // Lógica de cor para o tipo
                         const corTipo = u.tipo === 'VIP' ? '#ff0066' : '#666';
-                        
                         corpoTabela.innerHTML += `
                             <tr>
                                 <td class="td-id">#${u.id}</td>
@@ -70,44 +68,30 @@
                 });
         }
 
-                function resetar() {
-            if(!confirm("Deseja realmente resetar todos os saldos e logs?")) return;
-
-            fetch('/reset', { method: 'POST' })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message);
-                carregarUsuarios(); // Atualiza a tabela para mostrar os saldos em 100
-            })
-            .catch(error => alert("Erro ao resetar dados."));
-        }
-
         function distribuir() {
             const btn = document.getElementById('btnDistribuir');
-            const eventoId = document.getElementById('eventoId').value;
-
             btn.innerText = "Processando...";
-            btn.style.opacity = "0.7";
             btn.disabled = true;
 
-            fetch('/distribuir', { 
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id_evento: eventoId })
-            })
-            .then(response => response.json())
+            fetch('/distribuir', { method: 'POST' })
+            .then(res => res.json())
             .then(data => {
                 alert(data.message);
-                carregarUsuarios(); 
-            })
-            .catch(error => {
-                alert("Erro na operação de banco de dados.");
-                console.error(error);
+                carregarUsuarios();
             })
             .finally(() => {
                 btn.innerText = "Distribuir Créditos de Cashback";
-                btn.style.opacity = "1";
                 btn.disabled = false;
+            });
+        }
+
+        function resetar() {
+            if(!confirm("Deseja resetar os saldos para R$ 100.00 e limpar logs?")) return;
+            fetch('/reset', { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message);
+                carregarUsuarios();
             });
         }
 
