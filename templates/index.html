@@ -40,6 +40,10 @@
             </table>
         </div>
     </div>
+        <div style="display: flex; gap: 10px;">
+        <button id="btnDistribuir" onclick="distribuir()">Distribuir Créditos</button>
+        <button id="btnReset" onclick="resetar()" style="background: #333; color: #fff; width: 40%;">Reset</button>
+    </div>
 
     <script>
         function carregarUsuarios() {
@@ -64,6 +68,18 @@
                         `;
                     });
                 });
+        }
+
+                function resetar() {
+            if(!confirm("Deseja realmente resetar todos os saldos e logs?")) return;
+
+            fetch('/reset', { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                carregarUsuarios(); // Atualiza a tabela para mostrar os saldos em 100
+            })
+            .catch(error => alert("Erro ao resetar dados."));
         }
 
         function distribuir() {

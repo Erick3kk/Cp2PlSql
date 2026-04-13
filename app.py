@@ -56,6 +56,27 @@ def listar_usuarios():
     finally:
         conn.close()
 
+@app.route('/reset', methods=['POST'])
+def resetar_dados():
+    conn = get_connection()
+    if not conn:
+        return jsonify({"erro": "Erro de conexão"}), 500
+    
+    try:
+        cursor = conn.cursor()
+        # 1. Limpa a tabela de logs
+        cursor.execute("DELETE FROM LOG_AUDITORIA")
+        # 2. Volta o saldo de todos os usuários para um valor base (ex: 100)
+        cursor.execute("UPDATE USUARIOS SET SALDO = 100")
+        
+        conn.commit()
+        return jsonify({"status": "sucesso", "message": "Dados resetados com sucesso!"})
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"status": "erro", "message": str(e)}), 500
+    finally:
+        conn.close()
+
 @app.route('/distribuir', methods=['POST'])
 def distribuir_cashback():
     conn = get_connection()

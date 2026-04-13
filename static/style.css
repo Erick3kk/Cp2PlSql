@@ -72,6 +72,24 @@ button {
     letter-spacing: 1px;
 }
 
+.button-container {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+#btnReset {
+    background: transparent;
+    border: 1px solid #444;
+    color: #888;
+}
+
+#btnReset:hover {
+    background: #cc0000;
+    color: #fff;
+    border-color: #cc0000;
+    box-shadow: 0 5px 15px rgba(204, 0, 0, 0.2);
+}
 button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3); }
 
 .status-container { margin-top: 30px; border-top: 1px solid #333; padding-top: 20px; }
