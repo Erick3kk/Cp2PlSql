@@ -31,11 +31,12 @@
                     <tr>
                         <th>ID</th>
                         <th>Participante</th>
+                        <th>Tipo</th>
+                        <th>Presenças</th>
                         <th style="text-align: right;">Saldo</th>
                     </tr>
                 </thead>
-                <tbody id="tabela-usuarios">
-                    </tbody>
+                <tbody id="tabela-usuarios"></tbody>
             </table>
         </div>
     </div>
@@ -49,16 +50,20 @@
                     corpoTabela.innerHTML = ''; 
                     
                     data.forEach(u => {
+                        // Lógica de cor para o tipo
+                        const corTipo = u.tipo === 'VIP' ? '#ff0066' : '#666';
+                        
                         corpoTabela.innerHTML += `
                             <tr>
                                 <td class="td-id">#${u.id}</td>
                                 <td class="td-nome">${u.nome}</td>
+                                <td><span style="color: ${corTipo}; font-size: 10px; font-weight: bold;">${u.tipo}</span></td>
+                                <td style="text-align: center; color: #888;">${u.presencas}</td>
                                 <td class="td-saldo">R$ ${u.saldo}</td>
                             </tr>
                         `;
                     });
-                })
-                .catch(err => console.error("Erro ao carregar usuários:", err));
+                });
         }
 
         function distribuir() {

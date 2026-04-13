@@ -27,22 +27,32 @@ def index():
 def listar_usuarios():
     conn = get_connection()
     if not conn:
-        return jsonify({"erro": "Erro de conexão com o banco"}), 500
+        return jsonify({"erro": "Erro de conexão"}), 500
     
     try:
         cursor = conn.cursor()
-        cursor.execute("SELECT ID, NOME, SALDO FROM USUARIOS ORDER BY ID")
+        query = """
+            SELECT 
+                u.ID, 
+                u.NOME, 
+                u.SALDO,
+                (SELECT TIPO FROM INSCRICOES WHERE USUARIO_ID = u.ID AND ROWNUM = 1) as TIPO,
+                (SELECT COUNT(*) FROM INSCRICOES WHERE USUARIO_ID = u.ID AND STATUS = 'PRESENT') as PRESENCAS
+            FROM USUARIOS u
+            ORDER BY u.ID
+        """
+        cursor.execute(query)
         
         usuarios = []
         for row in cursor.fetchall():
             usuarios.append({
                 "id": row[0],
                 "nome": row[1],
-                "saldo": f"{row[2]:.2f}"
+                "saldo": f"{row[2]:.2f}",
+                "tipo": row[3] if row[3] else "NORMAL",
+                "presencas": row[4]
             })
         return jsonify(usuarios)
-    except Exception as e:
-        return jsonify({"erro": str(e)}), 500
     finally:
         conn.close()
 
